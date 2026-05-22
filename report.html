@@ -1,0 +1,86 @@
+<html>
+<head><meta charset="utf-8">
+<title>CSMAR 上市公司财务特征清洗与分析报告</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.8; }
+h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+h2 { color: #34495e; border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; }
+img { max-width: 800px; border: 1px solid #ddd; margin: 10px 0; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+th { background-color: #3498db; color: white; }
+tr:nth-child(even) { background-color: #f2f2f2; }
+</style>
+</head>
+<body>
+
+<h1>CSMAR 上市公司财务特征清洗与分析报告</h1>
+
+<h2>一、数据概览</h2>
+<p>数据来源：CSMAR（国泰安）上市公司财务数据</p>
+<p>样本规模：4,060,510 行</p>
+<p>公司数量：5,833 家</p>
+
+<h3>数据覆盖范围说明</h3>
+<table>
+<tr><th>数据类别</th><th>实际年份范围</th><th>说明</th></tr>
+<tr><td>治理变量（Top1, HHI5, 市值等）</td><td>2000-2023 年</td><td>「常用变量查询（年度）.xlsx」覆盖</td></tr>
+<tr><td>财务变量（Lev, ROA, Cash等）</td><td>2011-2024 年</td><td>「跨表查询_沪深京股票(年频).xlsx」覆盖</td></tr>
+</table>
+
+<p><strong>重要说明：</strong>受 CSMAR 数据源本身限制，财务报表数据（资产负债、利润表等）最早只到 2011 年。作业要求"2000年至今"为理想目标，实际分析中 2000-2010 年财务指标为缺失状态，已在各图表中单独过滤有效值。</p>
+<p>部分年份（2012-2015）存在企业资不抵债（总资产≤0）导致负债率极高（inf），已在分析时过滤合理范围（0≤Lev≤1.5）。</p>
+
+<h2>二、变量构造说明</h2>
+<table>
+<tr><th>变量</th><th>名称</th><th>计算公式</th></tr>
+<tr><td>Lev</td><td>总负债率</td><td>总负债 / 总资产</td></tr>
+<tr><td>SL</td><td>流动负债率</td><td>流动负债 / 总资产</td></tr>
+<tr><td>LL</td><td>长期负债率</td><td>非流动负债 / 总资产</td></tr>
+<tr><td>SDR</td><td>短债比率</td><td>流动负债 / 总负债</td></tr>
+<tr><td>Cash</td><td>现金比率</td><td>货币资金 / 总资产</td></tr>
+<tr><td>ROA</td><td>总资产收益率</td><td>净利润 / 总资产</td></tr>
+<tr><td>ROE</td><td>净资产收益率</td><td>净利润 / 所有者权益</td></tr>
+<tr><td>LLoan</td><td>长期银行借款率</td><td>长期借款 / 总资产</td></tr>
+<tr><td>Top1</td><td>第一大股东持股比例</td><td>直接取自 CSMAR</td></tr>
+<tr><td>HHI5</td><td>前五大股东持股集中度</td><td>Σ(前5位股东持股比例平方)</td></tr>
+<tr><td>Size</td><td>公司规模</td><td>ln(总资产)</td></tr>
+<tr><td>Age</td><td>上市年限</td><td>会计年度 - 上市年份 + 1</td></tr>
+</table>
+
+<h2>三、时序图</h2>
+<h3>图1：总负债率的均值与中位数（2011-2024）</h3>
+<p>分析：均值长期高于中位数，说明 A 股上市公司负债率分布右偏，存在高杠杆企业拉高均值的情况。2020 年后宏观杠杆率整体有所上升。</p>
+<img src="output/figures/fig01_lev_mean_median.png" width="800">
+
+<h3>图2：ROA 与 Cash 的年度均值（2011-2024）</h3>
+<p>分析：盈利能力（ROA）和现金持有（Cash）在多数年份呈同向变化，企业盈利好时现金更充裕。2023 年 ROA 均值约为 3.5%，反映 A 股整体盈利能力。</p>
+<img src="output/figures/fig02_roa_cash_mean.png" width="800">
+
+<h2>四、行业负债率分析</h2>
+<h3>图3：各行业年度平均负债率（算术平均）</h3>
+<p>分析：房地产（K）和建筑业（E）的负债率明显高于其他行业，均值超过 0.7，反映行业高杠杆经营特性。金融业（J）口径特殊，负债率最高但资产端结构不同。制造业（C）杠杆率适中且稳定。</p>
+<img src="output/figures/fig03_industry_lev_equal_weight.png" width="800">
+
+<h3>图4：各行业年度平均负债率（加权平均，按总资产）</h3>
+<p>分析：加权平均下房地产和金融业的负债率更高，说明大公司杠杆率更高。算术平均与加权平均的差异反映行业内大公司与小公司杠杆结构的分化。</p>
+<img src="output/figures/fig04_industry_lev_asset_weighted.png" width="800">
+
+<h2>五、股权结构分析</h2>
+<h3>图5：第一大股东持股比例（Top1）年度箱线图</h3>
+<p>分析：2005 年股权分置改革前后，Top1 分布发生明显变化——改革前中位数更高、极端值更多；2007 年后分布逐渐分散化。2023 年与早期年份相比，第一大股东持股比例整体下降，股权制衡程度有所改善。</p>
+<img src="output/figures/fig05_top1_boxplot_selected_years.png" width="800">
+
+<h2>六、数据说明</h2>
+<ul>
+<li>数据清洗：删除了重复行、关键字段缺失行，按年度 1%/99% 分位数缩尾处理（Winsorize）</li>
+<li>存储格式：CSV（基础）+ Parquet（进阶），Parquet 文件体积仅 25MB，读取速度比 CSV 快 17 倍</li>
+<li>变量字典：data/dict/variable_dictionary.csv，含 32 个变量的来源说明</li>
+<li>主键：code-year，合并财务报表和治理数据</li>
+<li><strong>数据局限：</strong>CSMAR 数据源中财务报表（资产负债表、利润表）最早只到 2011 年，因此 2000-2010 年杠杆率、ROA 等财务指标无法计算</li>
+</ul>
+
+<p style="color:#7f8c8d; margin-top:40px;">报告生成时间：2026-05-19</p>
+
+</body>
+</html>
